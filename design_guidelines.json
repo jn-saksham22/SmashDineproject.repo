@@ -1,0 +1,182 @@
+{
+  "identity": {
+    "persona": "E1: The Anti-AI Designer",
+    "mission": "Create a dual-personality experience: Visually spicy and appetite-inducing for customers, clinically clean and efficient for owners.",
+    "core_principles": [
+      "Fusion over Imitation: Mix magazine editorial layouts with reliable e-commerce UX.",
+      "Emotion First: Hunger for customers, Clarity for owners.",
+      "Content is King: Food photos must look edible; Data must be actionable.",
+      "Negative Space: Use whitespace to frame food and data alike.",
+      "Contrast: Bold Typography vs. Clean UI."
+    ]
+  },
+  "typography": {
+    "customer_app": {
+      "headings": {
+        "font_family": "Fraunces, serif",
+        "weights": ["600", "700"],
+        "usage": "Product titles, Category headers, Promos",
+        "fallback": "serif"
+      },
+      "body": {
+        "font_family": "Nunito, sans-serif",
+        "weights": ["400", "600"],
+        "usage": "Descriptions, Prices, Buttons",
+        "fallback": "sans-serif"
+      }
+    },
+    "owner_dashboard": {
+      "headings": {
+        "font_family": "Plus Jakarta Sans, sans-serif",
+        "weights": ["600", "700"],
+        "usage": "Page titles, Metric labels",
+        "fallback": "sans-serif"
+      },
+      "body": {
+        "font_family": "Inter, sans-serif",
+        "weights": ["400", "500"],
+        "usage": "Tables, Lists, Forms",
+        "fallback": "sans-serif"
+      }
+    },
+    "font_loading_instructions": "Import fonts via Google Fonts in index.css: @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Nunito:wght@400;600;800&family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');"
+  },
+  "colors": {
+    "modes": {
+      "customer_warm": {
+        "description": "Appetizing, energetic, impulsive. Triggers hunger.",
+        "palette": {
+          "primary": "#F97316",
+          "primary_foreground": "#FFFFFF",
+          "secondary": "#DC2626",
+          "secondary_foreground": "#FFFFFF",
+          "background": "#FFF7ED",
+          "surface": "#FFFFFF",
+          "text_main": "#431407",
+          "text_muted": "#78350F",
+          "border": "#FED7AA",
+          "success": "#16A34A",
+          "error": "#EF4444"
+        }
+      },
+      "owner_clean": {
+        "description": "Professional, calm, trustworthy. Focus on money and growth.",
+        "palette": {
+          "primary": "#10B981",
+          "primary_foreground": "#FFFFFF",
+          "secondary": "#0F172A",
+          "secondary_foreground": "#FFFFFF",
+          "background": "#F8FAFC",
+          "surface": "#FFFFFF",
+          "text_main": "#0F172A",
+          "text_muted": "#64748B",
+          "border": "#E2E8F0",
+          "success": "#10B981",
+          "error": "#EF4444"
+        }
+      }
+    },
+    "usage_rules": [
+      "CRITICAL: Customer pages MUST use the 'customer_warm' palette.",
+      "CRITICAL: Owner dashboard pages MUST use the 'owner_clean' palette.",
+      "Do NOT mix palettes. The separation of concerns must be visual.",
+      "Gradients: Use subtle noise textures over solid colors instead of linear gradients for a premium feel."
+    ]
+  },
+  "layout_strategies": {
+    "mobile_menu_customer": {
+      "type": "Mobile First Vertical Scroll",
+      "grid": "grid-cols-1",
+      "spacing": "Relaxed (p-4 to p-6)",
+      "navigation": "Sticky Bottom Bar (Cart, Order Status)",
+      "hero_section": "70vh height on mobile with parallax food image.",
+      "cards": "Large, full-width cards with edge-to-edge images."
+    },
+    "desktop_dashboard_owner": {
+      "type": "Sidebar + Grid Dashboard",
+      "grid": "grid-cols-12 gap-6",
+      "spacing": "Compact (p-4 internal, p-8 external)",
+      "navigation": "Fixed Left Sidebar (w-64)",
+      "widgets": {
+        "metrics": "col-span-3 h-32 (4 per row)",
+        "main_chart": "col-span-8 row-span-2",
+        "live_feed": "col-span-4 row-span-2"
+      }
+    }
+  },
+  "components": {
+    "buttons": {
+      "customer": "Rounded-full (pill), heavy drop shadows, large text. Interaction: Scale down on click.",
+      "owner": "Rounded-md (sm), subtle border, flat or low shadow. Interaction: Background color shift."
+    },
+    "cards": {
+      "food_item": "Rounded-xl, overflow-hidden. Image takes 60% height. Typography layered over white bottom section or gradient overlay.",
+      "dashboard_metric": "Border-1px (border-slate-200), white bg, no shadow (clean look)."
+    },
+    "forms": {
+      "customer": "Minimal inputs, bottom-border only (underlined style) for effortless feel.",
+      "owner": "Standard bordered inputs (Shadcn default) for data density and clarity."
+    },
+    "modals": {
+      "game_reward": "Full-screen overlay with blur-xl backdrop. Confetti effect on launch.",
+      "order_details": "Drawer (Sheet) sliding from bottom on mobile, from right on desktop."
+    }
+  },
+  "visual_enhancers": {
+    "textures": [
+      "Noise overlay (opacity 0.03) on all colored backgrounds to prevent digital flatness.",
+      "Subtle paper texture on the Customer Menu background."
+    ],
+    "motion": [
+      "Page Transitions: Slide Up for menu items.",
+      "Micro-interactions: Heart icon 'pop' on favorite.",
+      "Cart: Bounce effect when item added.",
+      "Dashboard: Smooth counter animations for numbers."
+    ],
+    "shadows": {
+      "customer": "shadow-[0_10px_40px_-10px_rgba(249,115,22,0.3)] (Warm Glow)",
+      "owner": "shadow-sm"
+    }
+  },
+  "images": {
+    "instructions": "Use these specific URLs for the respective categories. Do not use placeholders.",
+    "categories": {
+      "burgers": [
+        "https://images.unsplash.com/photo-1632898657999-ae6920976661?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzV8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwYnVyZ2VyJTIwZmFzdCUyMGZvb2R8ZW58MHx8fHwxNzcyNzg3MTk4fDA&ixlib=rb-4.1.0&q=85",
+        "https://images.unsplash.com/photo-1632898657953-f41f81bfa892?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzV8MHwxfHNlYXJjaHwyfHxnb3VybWV0JTIwYnVyZ2VyJTIwZmFzdCUyMGZvb2R8ZW58MHx8fHwxNzcyNzg3MTk4fDA&ixlib=rb-4.1.0&q=85",
+        "https://images.unsplash.com/photo-1627378378955-a3f4e406c5de?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzV8MHwxfHNlYXJjaHwzfHxnb3VybWV0JTIwYnVyZ2VyJTIwZmFzdCUyMGZvb2R8ZW58MHx8fHwxNzcyNzg3MTk4fDA&ixlib=rb-4.1.0&q=85"
+      ],
+      "drinks": [
+        "https://images.unsplash.com/photo-1746785011440-aff1c8e0e559?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MTJ8MHwxfHNlYXJjaHwyfHxmYW5jeSUyMGNvY2t0YWlsJTIwZHJpbmt8ZW58MHx8fHwxNzcyNzg3MTk5fDA&ixlib=rb-4.1.0&q=85",
+        "https://images.unsplash.com/photo-1746785011420-504d56709419?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MTJ8MHwxfHNlYXJjaHwxfHxmYW5jeSUyMGNvY2t0YWlsJTIwZHJpbmt8ZW58MHx8fHwxNzcyNzg3MTk5fDA&ixlib=rb-4.1.0&q=85",
+        "https://images.unsplash.com/photo-1746785011465-17d3d3ab026e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MTJ8MHwxfHNlYXJjaHwzfHxmYW5jeSUyMGNvY2t0YWlsJTIwZHJpbmt8ZW58MHx8fHwxNzcyNzg3MTk5fDA&ixlib=rb-4.1.0&q=85"
+      ],
+      "shakes": [
+        "https://images.unsplash.com/photo-1761637592257-3c5911ae5a3a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHwzfHxkZWxpY2lvdXMlMjBtaWxrc2hha2UlMjBkZXNzZXJ0fGVufDB8fHx8MTc3Mjc4NzIwMHww&ixlib=rb-4.1.0&q=85",
+        "https://images.unsplash.com/photo-1761023612875-2561e18d8934?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHw0fHxkZWxpY2lvdXMlMjBtaWxrc2hha2UlMjBkZXNzZXJ0fGVufDB8fHx8MTc3Mjc4NzIwMHww&ixlib=rb-4.1.0&q=85",
+        "https://images.unsplash.com/photo-1767114915915-4433437ac280?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHwyfHxkZWxpY2lvdXMlMjBtaWxrc2hha2UlMjBkZXNzZXJ0fGVufDB8fHx8MTc3Mjc4NzIwMHww&ixlib=rb-4.1.0&q=85"
+      ]
+    }
+  },
+  "mini_game": {
+    "title": "Smash Kart",
+    "type": "HTML5 Canvas",
+    "trigger": "Post-checkout success",
+    "style": "Retro Arcade, Pixel Art or Low Poly",
+    "container": "Modal Overlay",
+    "instructions": "Game must be playable within the browser. Use a simple canvas loop. Theme: Drive a food delivery scooter avoiding obstacles."
+  },
+  "accessibility": {
+    "contrast": "Ensure text contrast meets APCA standards. Use white text with text-shadow on dark food images.",
+    "touch_targets": "Minimum 48x48px for all interactive elements on mobile.",
+    "reduced_motion": "Respect prefers-reduced-motion media query."
+  },
+  "universal_guidelines": [
+    "Do NOT use gradients for the main background. Use solid colors or noise textures.",
+    "Do NOT center align the entire app. Use alignment for hierarchy.",
+    "Add data-testid to all interactive elements.",
+    "Use sonner for toasts.",
+    "Use lucide-react for icons.",
+    "Never use generic 'Lorem Ipsum'. Use real food names (e.g., 'Truffle Mushroom Burger')."
+  ]
+}
