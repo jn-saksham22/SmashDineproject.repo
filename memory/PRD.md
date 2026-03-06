@@ -72,18 +72,26 @@ Build an enterprise QR-based restaurant/cafe ordering platform where customers o
 - `payments` — Payment records (order_id, amount, method, txn_id, status)
 - `game_results` — Game outcomes (order_id, player_name, won, coupon_code, reward_type)
 
-## Game Mechanics (Smash Kart)
+## Game Mechanics (Smash Kart) — v2 (3-Round System)
 - HTML5 Canvas game, runs in browser
 - Player (orange kart) vs Enemy (red kart) — horizontal arena
-- Arrow keys / drag to move up/down
-- Click / Space / tap to shoot
-- **Player Power based on order total:**
-  - < ₹300 → 11 damage/shot
-  - ₹300–₹700 → 16 damage/shot
-  - ₹700–₹1500 → 26 damage/shot
-  - > ₹1500 → 38 damage/shot (ULTRA)
-- Enemy AI: random movement, auto-fires every ~2s, 12 damage/shot
-- 80-second time limit. Win = deplete enemy HP, Lose = time out or player HP reaches 0
+- Arrow keys / drag to move up/down; Click / Space / tap to shoot
+- **3 Rounds — must win ALL 3 to claim reward (~50% success rate)**
+
+| Round | Label | Enemy HP | Fire Rate | Bullet DMG | Special |
+|-------|-------|----------|-----------|------------|---------|
+| 1 | Challenger | 105 | 1.65s | 13 | Normal |
+| 2 | Veteran | 155 | 1.1s | 17 | Faster, more accurate |
+| 3 | BOSS | 200 | 0.82s | 21 | Double bullets, enrages at 30% HP |
+
+- **Player HP carries over** between rounds (+28 recovery after each win)
+- **Player Power (damage per shot) based on order total:**
+  - < ₹300 → 7 damage/shot (LOW)
+  - ₹300–₹700 → 11 damage/shot (MED)
+  - ₹700–₹1500 → 16 damage/shot (HIGH)
+  - > ₹1500 → 23 damage/shot (ULTRA)
+- **Boss Enrage**: At 30% HP, boss fires 3 bullets/burst with 0.37s interval
+- **Screen shake** on player hit; **danger flash** when HP < 25
 
 ## Reward System
 - Win with total < ₹500 → 10% Discount coupon
