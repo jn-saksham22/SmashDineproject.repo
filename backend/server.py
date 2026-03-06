@@ -464,7 +464,8 @@ class GameResultRequest(BaseModel):
 async def save_game_result(req: GameResultRequest):
     existing = await db.game_results.find_one({'order_id': req.order_id})
     if existing:
-        return {**existing, '_id': None}
+        existing.pop('_id', None)
+        return existing
 
     order = await db.orders.find_one({'order_id': req.order_id}, {'_id': 0})
     if not order:
