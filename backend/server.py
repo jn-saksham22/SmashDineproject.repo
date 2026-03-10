@@ -269,7 +269,7 @@ FRONTEND_URL = os.environ.get('REACT_APP_FRONTEND_URL', 'https://smash-cart-dine
 
 @api_router.get('/qr/{restaurant_id}/{table_number}')
 async def get_qr_code(restaurant_id: str, table_number: int):
-    url = f'https://smash-cart-dine.preview.emergentagent.com/menu?rid={restaurant_id}&table={table_number}'
+    url = f'{FRONTEND_URL}/menu?rid={restaurant_id}&table={table_number}'
     qr_b64 = generate_qr_base64(url)
     return {'qr_code': qr_b64, 'url': url, 'table_number': table_number, 'restaurant_id': restaurant_id}
 
