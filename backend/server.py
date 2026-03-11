@@ -265,7 +265,7 @@ async def get_owner_profile(current=Depends(get_current_owner)):
 
 # ── QR Code Endpoints ─────────────────────────────────────────────────────────
 
-FRONTEND_URL = os.environ.get('REACT_APP_FRONTEND_URL', 'https://smash-cart-dine.preview.emergentagent.com')
+FRONTEND_URL = os.environ.get('REACT_APP_FRONTEND_URL', 'https://smashdine-preview.preview.emergentagent.com')
 
 @api_router.get('/qr/{restaurant_id}/{table_number}')
 async def get_qr_code(restaurant_id: str, table_number: int):

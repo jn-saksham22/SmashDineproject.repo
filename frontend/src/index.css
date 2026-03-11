@@ -144,8 +144,13 @@ body {
 /* Game canvas */
 #game-canvas {
   display: block;
-  max-width: 100%;
   touch-action: none;
+  outline: none;
+}
+
+/* Fullscreen game body lock */
+body:has(#game-canvas) {
+  overflow: hidden;
 }
 
 [data-debug-wrapper="true"] { display: contents !important; }
