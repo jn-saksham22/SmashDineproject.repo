@@ -72,10 +72,11 @@ Build an enterprise QR-based restaurant/cafe ordering platform where customers o
 - `payments` — Payment records (order_id, amount, method, txn_id, status)
 - `game_results` — Game outcomes (order_id, player_name, won, coupon_code, reward_type)
 
-## Game Mechanics (Smash Kart) — v2 (3-Round System)
-- HTML5 Canvas game, runs in browser
-- Player (orange kart) vs Enemy (red kart) — horizontal arena
-- Arrow keys / drag to move up/down; Click / Space / tap to shoot
+## Game Mechanics (Smash Kart) — v3 (Fullscreen Vertical Arena)
+- HTML5 Canvas game, runs in browser — **fullscreen vertical arena**
+- Player (orange ship) at **BOTTOM** vs Enemy (red ship) at **TOP**
+- Arrow Left/Right or A/D / drag to move horizontally; Click / Space / tap to shoot upward
+- Dark space theme with stars, grid, center divider, and glowing effects
 - **3 Rounds — must win ALL 3 to claim reward (~50% success rate)**
 
 | Round | Label | Enemy HP | Fire Rate | Bullet DMG | Special |
@@ -116,6 +117,14 @@ Build an enterprise QR-based restaurant/cafe ordering platform where customers o
 - [x] Owner dashboard with live orders + status management
 - [x] Revenue analytics with recharts graphs
 - [x] Simulated payment with GST (18%) calculation
+
+## What's Implemented (v1.1) — Feb 2026
+- [x] **Fullscreen Vertical Arena** — Game redesigned from horizontal side-view to vertical fullscreen
+- [x] Player ship at bottom (facing up) vs Enemy ship at top (facing down)
+- [x] Dark space theme with stars, grid, arena divider, and glowing effects
+- [x] Top HUD: Player HP (left), Timer (center), Enemy HP (right)
+- [x] Responsive design — works on desktop and mobile
+- [x] Arrow-shaped battle vehicles with exhaust flames and hit effects
 
 ## Prioritized Backlog
 
