@@ -35,17 +35,15 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
 app = FastAPI(title="SmashDine Platform")
-api_router = APIRouter(prefix="/api")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://smash-dineproject-repo-jn-saksham22s-projects.vercel.app/",  # ← paste your exact Vercel URL
-        "http://localhost:3000",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+api_router = APIRouter(prefix="/api")
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -586,13 +584,7 @@ async def get_analytics(current=Depends(get_current_owner)):
 
 app.include_router(api_router)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
