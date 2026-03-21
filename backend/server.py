@@ -41,10 +41,9 @@ origins = [
     "https://smash-dineproject-repo.vercel.app",
     "http://localhost:3000",
 ]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["https://smash-dineproject-repo.vercel.app", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
