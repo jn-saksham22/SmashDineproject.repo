@@ -19,7 +19,16 @@ from bson import ObjectId
 from datetime import datetime, timezone, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://smash-dineproject-repo-jn-saksham22s-projects.vercel.app/",  # ← paste your exact Vercel URL
+        "http://localhost:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
