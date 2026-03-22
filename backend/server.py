@@ -175,7 +175,6 @@ class RegisterRequest(BaseModel):
 class LoginRequest(BaseModel):
     email: str
     password: str
-
 @api_router.post('/auth/register')
 async def register_owner(req: RegisterRequest):
 existing = await db.owners.find_one({'email': req.email.lower()})
