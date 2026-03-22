@@ -39,7 +39,7 @@ api_router = APIRouter(prefix="/api")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://smash-dineproject-repo.vercel.app", "http://localhost:3000"],
+    allow_origins=["https://smashdine.vercel.app", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
@@ -261,7 +261,7 @@ async def get_owner_profile(current=Depends(get_current_owner)):
     rest_data = to_str_id(rest) if rest else {}
     return {'owner': owner_data, 'restaurant': rest_data}
 
-FRONTEND_URL = os.environ.get('REACT_APP_FRONTEND_URL', 'https://smash-dineproject-repo.vercel.app')
+FRONTEND_URL = os.environ.get('REACT_APP_FRONTEND_URL', 'https://smashdine.vercel.app')
 
 @api_router.get('/qr/{restaurant_id}/{table_number}')
 async def get_qr_code(restaurant_id: str, table_number: int):
