@@ -47,15 +47,18 @@ export default function OwnerLogin() {
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Email address</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                Email or Mobile Number
+              </label>
               <input
                 data-testid="login-email"
-                type="email"
+                type="text"
                 value={form.email}
                 onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
                 className="w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-                placeholder="owner@restaurant.com"
+                placeholder="email@restaurant.com or 9876543210"
               />
+              <p className="text-xs text-slate-400 mt-1">You can login with either your email or mobile number</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
