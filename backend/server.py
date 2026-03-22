@@ -37,10 +37,6 @@ security = HTTPBearer()
 app = FastAPI(title="SmashDine Platform")
 api_router = APIRouter(prefix="/api")
 
-origins = [
-    "https://smash-dineproject-repo.vercel.app",
-    "http://localhost:3000",
-]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://smash-dineproject-repo.vercel.app", "http://localhost:3000"],
@@ -52,14 +48,10 @@ app.add_middleware(
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# ── MongoDB helpers ─────────────────────────────────────────────────────────
-
 def to_str_id(doc: dict) -> dict:
     if doc and '_id' in doc:
         doc['id'] = str(doc.pop('_id'))
     return doc
-
-# ── Auth utils ───────────────────────────────────────────────────────────────
 
 def hash_password(pwd: str) -> str:
     return pwd_context.hash(pwd)
@@ -83,8 +75,6 @@ async def get_current_owner(credentials: HTTPAuthorizationCredentials = Depends(
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
-# ── Helpers ──────────────────────────────────────────────────────────────────
-
 def gen_order_id() -> str:
     chars = string.ascii_uppercase + string.digits
     return 'ORD-' + ''.join(random.choices(chars, k=4)) + '-' + ''.join(random.choices(chars, k=4))
@@ -107,7 +97,6 @@ def calc_prep_time(items: list) -> int:
     if not items:
         return 5
     times = [i.get('prep_time_minutes', 8) * i.get('quantity', 1) for i in items]
-    # First item full time, rest add 40%
     times_sorted = sorted(times, reverse=True)
     total = times_sorted[0] + sum(t * 0.4 for t in times_sorted[1:])
     return min(int(total), 40)
@@ -160,8 +149,6 @@ SEED_ITEMS = {
     ],
 }
 
-# ── Auth Endpoints ────────────────────────────────────────────────────────────
-
 class RegisterRequest(BaseModel):
     name: str
     email: str
@@ -175,16 +162,16 @@ class RegisterRequest(BaseModel):
 class LoginRequest(BaseModel):
     email: str
     password: str
+
 @api_router.post('/auth/register')
 async def register_owner(req: RegisterRequest):
-existing = await db.owners.find_one({'email': req.email.lower()})
+    existing = await db.owners.find_one({'email': req.email.lower()})
     if existing:
         raise HTTPException(status_code=400, detail='Email already registered')
     if req.mobile:
         mob_exists = await db.owners.find_one({'mobile': req.mobile})
         if mob_exists:
             raise HTTPException(status_code=400, detail='Mobile number already registered')
-
     restaurant_doc = {
         'name': req.restaurant_name,
         'description': req.restaurant_description,
@@ -195,8 +182,7 @@ existing = await db.owners.find_one({'email': req.email.lower()})
     }
     res = await db.restaurants.insert_one(restaurant_doc)
     restaurant_id = str(res.inserted_id)
-
-  owner_doc = {
+    owner_doc = {
         'name': req.name,
         'email': req.email.lower(),
         'mobile': req.mobile or '',
@@ -206,17 +192,13 @@ existing = await db.owners.find_one({'email': req.email.lower()})
     }
     owner_res = await db.owners.insert_one(owner_doc)
     owner_id = str(owner_res.inserted_id)
-
-    # Seed menu
     await _seed_menu(restaurant_id)
-
     token = create_token({'owner_id': owner_id, 'restaurant_id': restaurant_id})
     return {'token': token, 'owner_id': owner_id, 'restaurant_id': restaurant_id,
             'restaurant_name': req.restaurant_name}
 
 @api_router.post('/auth/login')
 async def login_owner(req: LoginRequest):
-    # Try email first, then mobile
     owner = await db.owners.find_one({'email': req.email.lower()})
     if not owner:
         owner = await db.owners.find_one({'mobile': req.email})
@@ -228,8 +210,6 @@ async def login_owner(req: LoginRequest):
     token = create_token({'owner_id': owner_id, 'restaurant_id': restaurant_id})
     return {'token': token, 'owner_id': owner_id, 'restaurant_id': restaurant_id,
             'restaurant_name': rest['name'] if rest else 'Restaurant'}
-
-# ── Seed helper ───────────────────────────────────────────────────────────────
 
 async def _seed_menu(restaurant_id: str):
     for cat_data in SEED_CATEGORIES:
@@ -250,8 +230,6 @@ async def reseed_menu(current=Depends(get_current_owner)):
     await db.menu_items.delete_many({'restaurant_id': rid})
     await _seed_menu(rid)
     return {'message': 'Menu seeded successfully'}
-
-# ── Restaurant Endpoints ──────────────────────────────────────────────────────
 
 @api_router.get('/restaurant/{restaurant_id}')
 async def get_restaurant(restaurant_id: str):
@@ -283,8 +261,6 @@ async def get_owner_profile(current=Depends(get_current_owner)):
     rest_data = to_str_id(rest) if rest else {}
     return {'owner': owner_data, 'restaurant': rest_data}
 
-# ── QR Code Endpoints ─────────────────────────────────────────────────────────
-
 FRONTEND_URL = os.environ.get('REACT_APP_FRONTEND_URL', 'https://smash-dineproject-repo.vercel.app')
 
 @api_router.get('/qr/{restaurant_id}/{table_number}')
@@ -292,8 +268,6 @@ async def get_qr_code(restaurant_id: str, table_number: int):
     url = f'{FRONTEND_URL}/menu?rid={restaurant_id}&table={table_number}'
     qr_b64 = generate_qr_base64(url)
     return {'qr_code': qr_b64, 'url': url, 'table_number': table_number, 'restaurant_id': restaurant_id}
-
-# ── Menu Endpoints (Public) ───────────────────────────────────────────────────
 
 @api_router.get('/menu/{restaurant_id}')
 async def get_menu(restaurant_id: str):
@@ -303,20 +277,13 @@ async def get_menu(restaurant_id: str):
         raise HTTPException(status_code=404, detail='Restaurant not found')
     if not rest:
         raise HTTPException(status_code=404, detail='Restaurant not found')
-
     cats = await db.categories.find({'restaurant_id': restaurant_id, 'is_active': True}).sort('sort_order', 1).to_list(100)
     result = []
     for cat in cats:
         cat_id = str(cat['_id'])
         items = await db.menu_items.find({'category_id': cat_id, 'is_available': True}).to_list(100)
-        result.append({
-            'id': cat_id,
-            'name': cat['name'],
-            'items': [to_str_id(i) for i in items]
-        })
+        result.append({'id': cat_id, 'name': cat['name'], 'items': [to_str_id(i) for i in items]})
     return {'restaurant': to_str_id(rest), 'categories': result}
-
-# ── Owner Menu Management ─────────────────────────────────────────────────────
 
 @api_router.get('/owner/categories')
 async def get_categories(current=Depends(get_current_owner)):
@@ -384,8 +351,6 @@ async def delete_menu_item(item_id: str, current=Depends(get_current_owner)):
     await db.menu_items.delete_one({'_id': ObjectId(item_id), 'restaurant_id': current['restaurant_id']})
     return {'message': 'Item deleted'}
 
-# ── Order Endpoints ───────────────────────────────────────────────────────────
-
 class OrderItemIn(BaseModel):
     menu_item_id: str
     name: str
@@ -412,7 +377,6 @@ async def create_order(req: CreateOrderRequest):
     order_id = gen_order_id()
     now = datetime.now(timezone.utc)
     estimated_ready = now + timedelta(minutes=prep_time)
-
     doc = {
         'order_id': order_id,
         'restaurant_id': req.restaurant_id,
@@ -429,11 +393,9 @@ async def create_order(req: CreateOrderRequest):
         'created_at': now.isoformat(),
     }
     await db.orders.insert_one(doc)
-    return {
-        'order_id': order_id, 'subtotal': subtotal, 'gst_amount': gst_amount,
-        'total': total, 'prep_time_minutes': prep_time,
-        'estimated_ready_at': estimated_ready.isoformat(), 'status': 'pending'
-    }
+    return {'order_id': order_id, 'subtotal': subtotal, 'gst_amount': gst_amount,
+            'total': total, 'prep_time_minutes': prep_time,
+            'estimated_ready_at': estimated_ready.isoformat(), 'status': 'pending'}
 
 @api_router.get('/orders/{order_id}')
 async def get_order(order_id: str):
@@ -443,8 +405,6 @@ async def get_order(order_id: str):
     game_result = await db.game_results.find_one({'order_id': order_id}, {'_id': 0})
     order['game_result'] = game_result
     return order
-
-# ── Payment Endpoints (Simulated) ─────────────────────────────────────────────
 
 class PaymentRequest(BaseModel):
     order_id: str
@@ -458,10 +418,8 @@ async def simulate_payment(req: PaymentRequest):
         raise HTTPException(status_code=404, detail='Order not found')
     if order.get('payment_status') == 'completed':
         return {'success': True, 'order_id': req.order_id, 'message': 'Already paid'}
-
     txn_id = 'TXN-' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
     now = datetime.now(timezone.utc).isoformat()
-
     await db.orders.update_one({'order_id': req.order_id}, {
         '$set': {'payment_status': 'completed', 'status': 'preparing',
                  'customer_name': req.customer_name, 'payment_method': req.payment_method}
@@ -472,8 +430,6 @@ async def simulate_payment(req: PaymentRequest):
     await db.payments.insert_one(payment_doc)
     return {'success': True, 'order_id': req.order_id, 'txn_id': txn_id,
             'amount': order['total'], 'message': 'Payment successful'}
-
-# ── Game Endpoints ────────────────────────────────────────────────────────────
 
 class GameResultRequest(BaseModel):
     order_id: str
@@ -486,14 +442,11 @@ async def save_game_result(req: GameResultRequest):
     if existing:
         existing.pop('_id', None)
         return existing
-
     order = await db.orders.find_one({'order_id': req.order_id}, {'_id': 0})
     if not order:
         raise HTTPException(status_code=404, detail='Order not found')
-
     result = {'order_id': req.order_id, 'player_name': req.player_name, 'won': req.won,
               'created_at': datetime.now(timezone.utc).isoformat()}
-
     if req.won:
         reward = calc_reward(order.get('total', 0))
         coupon = gen_coupon_code()
@@ -504,7 +457,6 @@ async def save_game_result(req: GameResultRequest):
     else:
         result.update({'reward_type': 'none', 'reward_label': 'Better luck next time!',
                        'discount_pct': 0, 'free_drinks': 0, 'coupon_code': None})
-
     await db.game_results.insert_one(result)
     result.pop('_id', None)
     return result
@@ -515,8 +467,6 @@ async def get_game_result(order_id: str):
     if not result:
         raise HTTPException(status_code=404, detail='Game result not found')
     return result
-
-# ── Owner Dashboard Endpoints ─────────────────────────────────────────────────
 
 @api_router.get('/owner/orders')
 async def get_owner_orders(status: Optional[str] = None, current=Depends(get_current_owner)):
@@ -544,26 +494,19 @@ async def update_order_status(order_id: str, data: dict, current=Depends(get_cur
 async def get_analytics(current=Depends(get_current_owner)):
     rid = current['restaurant_id']
     all_orders = await db.orders.find({'restaurant_id': rid, 'payment_status': 'completed'}, {'_id': 0}).to_list(1000)
-
     total_revenue = sum(o.get('total', 0) for o in all_orders)
     total_orders = len(all_orders)
     avg_order = round(total_revenue / total_orders, 2) if total_orders else 0
-
-    # Status breakdown
     status_counts = {}
     for o in await db.orders.find({'restaurant_id': rid}, {'_id': 0, 'status': 1}).to_list(1000):
         s = o.get('status', 'unknown')
         status_counts[s] = status_counts.get(s, 0) + 1
-
-    # Top items
     item_counts = {}
     for o in all_orders:
         for item in o.get('items', []):
             n = item.get('name', '')
             item_counts[n] = item_counts.get(n, 0) + item.get('quantity', 1)
     top_items = sorted(item_counts.items(), key=lambda x: -x[1])[:8]
-
-    # Revenue by day (last 7 days)
     from collections import defaultdict
     daily = defaultdict(float)
     for o in all_orders:
@@ -571,17 +514,12 @@ async def get_analytics(current=Depends(get_current_owner)):
         if date_str:
             daily[date_str] += o.get('total', 0)
     daily_revenue = [{'date': d, 'revenue': round(v, 2)} for d, v in sorted(daily.items())[-7:]]
-
-    # Game stats
     game_wins = await db.game_results.count_documents({'order_id': {'$in': [o['order_id'] for o in all_orders]}, 'won': True})
     game_total = await db.game_results.count_documents({'order_id': {'$in': [o['order_id'] for o in all_orders]}})
-
-    # Table stats
     table_counts = {}
     for o in all_orders:
         t = str(o.get('table_number', 0))
         table_counts[t] = table_counts.get(t, 0) + 1
-
     return {
         'total_revenue': round(total_revenue, 2),
         'total_orders': total_orders,
@@ -593,11 +531,7 @@ async def get_analytics(current=Depends(get_current_owner)):
         'top_tables': sorted(table_counts.items(), key=lambda x: -x[1])[:5],
     }
 
-# ── Include router ────────────────────────────────────────────────────────────
-
 app.include_router(api_router)
-
-
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
