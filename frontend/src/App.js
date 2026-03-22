@@ -1,6 +1,7 @@
 import "@/App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 import LandingPage from "./pages/LandingPage";
 import MenuPage from "./pages/MenuPage";
 import CheckoutPage from "./pages/CheckoutPage";
@@ -23,6 +24,7 @@ function App() {
   return (
     <div className="App">
       <Toaster position="top-center" richColors />
+      <VercelAnalytics />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
