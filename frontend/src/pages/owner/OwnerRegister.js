@@ -8,7 +8,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function OwnerRegister() {
   const [form, setForm] = useState({
-    name: "", email: "", password: "", confirm_password: "",
+    name: "", email: "", mobile: "", password: "", confirm_password: "",
     restaurant_name: "", restaurant_description: "", restaurant_address: "", cuisine_type: "Multi-Cuisine"
   });
   const [showPwd, setShowPwd] = useState(false);
@@ -23,6 +23,14 @@ export default function OwnerRegister() {
       toast.error("Please fill in all required fields");
       return;
     }
+    if (!form.mobile) {
+      toast.error("Mobile number is required");
+      return;
+    }
+    if (!/^[6-9]\d{9}$/.test(form.mobile)) {
+      toast.error("Enter a valid 10-digit Indian mobile number");
+      return;
+    }
     if (form.password !== form.confirm_password) {
       toast.error("Passwords do not match");
       return;
@@ -33,9 +41,12 @@ export default function OwnerRegister() {
     }
     setLoading(true);
     try {
-      const payload = { name: form.name, email: form.email, password: form.password,
-        restaurant_name: form.restaurant_name, restaurant_description: form.restaurant_description,
-        restaurant_address: form.restaurant_address, cuisine_type: form.cuisine_type };
+      const payload = {
+        name: form.name, email: form.email, mobile: form.mobile,
+        password: form.password, restaurant_name: form.restaurant_name,
+        restaurant_description: form.restaurant_description,
+        restaurant_address: form.restaurant_address, cuisine_type: form.cuisine_type
+      };
       const { data } = await axios.post(`${API}/auth/register`, payload);
       localStorage.setItem("owner_token", data.token);
       localStorage.setItem("owner_restaurant_id", data.restaurant_id);
@@ -80,6 +91,19 @@ export default function OwnerRegister() {
             </div>
 
             <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">Mobile Number *</label>
+              <div className="flex gap-2">
+                <div className="flex items-center px-3 py-3 border border-slate-200 rounded-xl bg-slate-50 text-slate-500 text-sm font-medium">
+                  🇮🇳 +91
+                </div>
+                <input data-testid="reg-mobile" type="tel" value={form.mobile}
+                  onChange={e => update("mobile", e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  className="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                  placeholder="9876543210" maxLength={10} />
+              </div>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">Restaurant Name *</label>
               <input data-testid="reg-restaurant-name" type="text" value={form.restaurant_name}
                 onChange={e => update("restaurant_name", e.target.value)}
@@ -99,7 +123,7 @@ export default function OwnerRegister() {
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Cuisine Type</label>
                 <select value={form.cuisine_type} onChange={e => update("cuisine_type", e.target.value)}
                   className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all bg-white">
-                  {["Multi-Cuisine", "Fast Food", "Cafe", "Fine Dining", "Chinese", "Indian", "Continental", "Italian"].map(c => (
+                  {["Multi-Cuisine","Fast Food","Cafe","Fine Dining","Chinese","Indian","Continental","Italian"].map(c => (
                     <option key={c}>{c}</option>
                   ))}
                 </select>
@@ -108,8 +132,8 @@ export default function OwnerRegister() {
 
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">Description</label>
-              <textarea value={form.restaurant_description} onChange={e => update("restaurant_description", e.target.value)}
-                rows={2}
+              <textarea value={form.restaurant_description}
+                onChange={e => update("restaurant_description", e.target.value)} rows={2}
                 className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all resize-none"
                 placeholder="Best burgers in town..." />
             </div>
