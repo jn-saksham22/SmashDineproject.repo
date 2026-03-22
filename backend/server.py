@@ -165,6 +165,7 @@ SEED_ITEMS = {
 class RegisterRequest(BaseModel):
     name: str
     email: str
+    mobile: Optional[str] = ''
     password: str
     restaurant_name: str
     restaurant_description: Optional[str] = ''
@@ -177,9 +178,13 @@ class LoginRequest(BaseModel):
 
 @api_router.post('/auth/register')
 async def register_owner(req: RegisterRequest):
-    existing = await db.owners.find_one({'email': req.email.lower()})
+existing = await db.owners.find_one({'email': req.email.lower()})
     if existing:
         raise HTTPException(status_code=400, detail='Email already registered')
+    if req.mobile:
+        mob_exists = await db.owners.find_one({'mobile': req.mobile})
+        if mob_exists:
+            raise HTTPException(status_code=400, detail='Mobile number already registered')
 
     restaurant_doc = {
         'name': req.restaurant_name,
@@ -192,9 +197,10 @@ async def register_owner(req: RegisterRequest):
     res = await db.restaurants.insert_one(restaurant_doc)
     restaurant_id = str(res.inserted_id)
 
-    owner_doc = {
+  owner_doc = {
         'name': req.name,
         'email': req.email.lower(),
+        'mobile': req.mobile or '',
         'password_hash': hash_password(req.password),
         'restaurant_id': restaurant_id,
         'created_at': datetime.now(timezone.utc).isoformat()
@@ -211,9 +217,12 @@ async def register_owner(req: RegisterRequest):
 
 @api_router.post('/auth/login')
 async def login_owner(req: LoginRequest):
+    # Try email first, then mobile
     owner = await db.owners.find_one({'email': req.email.lower()})
+    if not owner:
+        owner = await db.owners.find_one({'mobile': req.email})
     if not owner or not verify_password(req.password, owner['password_hash']):
-        raise HTTPException(status_code=401, detail='Invalid email or password')
+        raise HTTPException(status_code=401, detail='Invalid email/mobile or password')
     owner_id = str(owner['_id'])
     restaurant_id = owner['restaurant_id']
     rest = await db.restaurants.find_one({'_id': ObjectId(restaurant_id)})
